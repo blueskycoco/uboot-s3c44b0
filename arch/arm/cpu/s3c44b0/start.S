@@ -38,13 +38,25 @@
 
 .globl _start
 _start:	b       reset
-	add	pc, pc, #0x0c000000
-	add	pc, pc, #0x0c000000
-	add	pc, pc, #0x0c000000
-	add	pc, pc, #0x0c000000
-	add	pc, pc, #0x0c000000
-	add	pc, pc, #0x0c000000
-	add	pc, pc, #0x0c000000
+	/* 
+add pc, pc, #0x0c000000 
+add pc, pc, #0x0c000000 
+add pc, pc, #0x0c000000 
+add pc, pc, #0x0c000000 
+add pc, pc, #0x0c000000 
+add pc, pc, #0x0c000000 
+add pc, pc, #0x0c000000 
+*/ 
+LDR PC, Undefined_Addr 
+LDR PC, SWI_Addr 
+LDR PC, Prefetch_Addr 
+LDR PC, Abort_Addr 
+LDR PC,RESERVE_Addr 
+LDR PC, IRQ_Addr 
+/* subs pc,lr,#4*/ 
+LDR PC, IRQ_Addr 
+/* subs pc,lr,#4*/ 
+
 
 	.balignl 16,0xdeadbeef
 
@@ -101,6 +113,20 @@ FIQ_STACK_START:
 IRQ_STACK_START_IN:
 	.word	0x0badc0de
 
+Undefined_Addr: 
+.word 0x0c000004 
+SWI_Addr: 
+.word 0x0c000008 
+Prefetch_Addr: 
+.word 0x0c00000C 
+Abort_Addr: 
+.word 0x0c000010 
+RESERVE_Addr: 
+.word 0x0c000014 
+IRQ_Addr: 
+.word 0x0c000018 
+FIQ_Addr: 
+.word 0x0c00001C 
 /*
  * the actual reset code
  */
@@ -111,7 +137,7 @@ reset:
 	 */
 	mrs	r0,cpsr
 	bic	r0,r0,#0x1f
-	orr	r0,r0,#0xd3
+	orr	r0,r0,#0x13
 	msr	cpsr,r0
 
 	/*
@@ -277,7 +303,7 @@ cpu_init_crit:
 	 * mask all IRQs by clearing all bits in the INTMRs
 	 */
 	ldr	r1,=INTMSK
-	ldr	r0, =0x03fffeff
+	ldr	r0, =0x07ffffff
 	str	r0, [r1]
 
 	ldr	r1, =INTCON
@@ -286,7 +312,7 @@ cpu_init_crit:
 
 	/* Set Clock Control Register */
 	ldr	r1, =LOCKTIME
-	ldrb	r0, =800
+	ldrb	r0, =0xfff
 	strb	r0, [r1]
 
 	ldr	r1, =PLLCON

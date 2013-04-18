@@ -31,6 +31,11 @@
 #include <command.h>
 #include "rtl8019.h"
 #include <net.h>
+#ifdef CONFIG_DRIVER_RTL8019
+
+
+#undef RTL8019_8BIT
+
 
 /* packet page register access functions */
 
@@ -38,12 +43,44 @@ static unsigned char get_reg (unsigned int regno)
 {
 	return (*(unsigned char *) regno);
 }
-
+static unsigned short get_reg_short (unsigned int regno)
+{
+	return (*(unsigned short *) regno);
+}
 static void put_reg (unsigned int regno, unsigned char val)
 {
 	*(volatile unsigned char *) regno = val;
 }
+static void put_reg_short (unsigned int regno, unsigned short val)
+{
+	*(volatile unsigned short *) regno = val;
+}
+static short inp ( unsigned int regxx )
+{
+	short regvalue,*pt;
+	pt = (unsigned short*)regxx;
+	regvalue = *pt;
+	return(regvalue);
+}
 
+static void outp ( unsigned int regxx, short regvalue )
+{
+	short *pt;
+	pt = (unsigned short*)regxx;
+	*pt = regvalue;
+}
+static void set_page(char pageno)
+{
+	char temp1,temp2;
+
+	temp1=0x3f&inp(RTL8019_REG_00);
+	temp1=temp1|(pageno<<6)|0x20;
+	outp(RTL8019_REG_00,temp1);
+	temp2=((char)inp(RTL8019_REG_00))>>6;
+	/*if (pageno==temp2)
+		 printf("Select page %d\n",temp2);
+	else printf("Select page ERROR");*/
+}
 static void eth_reset (void)
 {
 	unsigned char ucTemp;
@@ -69,7 +106,7 @@ void rtl8019_get_enetaddr (uchar * addr)
 	put_reg (RTL8019_REMOTEBYTECOUNT0, 12);
 	put_reg (RTL8019_REMOTEBYTECOUNT1, 0x00);
 	put_reg (RTL8019_COMMAND, RTL8019_REMOTEDMARD);
-	printf ("MAC: ");
+	printf ("rtl8019 MAC: ");
 	for (i = 0; i < 6; i++) {
 		temp = get_reg (RTL8019_DMA_DATA);
 		*addr++ = temp;
@@ -84,17 +121,22 @@ void rtl8019_get_enetaddr (uchar * addr)
 	put_reg (RTL8019_COMMAND, RTL8019_PAGE0);
 }
 
-void eth_halt (void)
+void rtl8019_halt (struct eth_device *dev)
 {
 	put_reg (RTL8019_COMMAND, 0x01);
 }
 
-int eth_init (bd_t * bd)
+int rtl8019_init (struct eth_device *dev,bd_t * bd)
 {
 	uchar enetaddr[6];
 	eth_reset ();
 	put_reg (RTL8019_COMMAND, RTL8019_PAGE0STOP);
+#ifdef RTL8019_8BIT
+	//put_reg (RTL8019_DATACONFIGURATION, 0x48);
 	put_reg (RTL8019_DATACONFIGURATION, 0x48);
+#else
+	put_reg (RTL8019_DATACONFIGURATION, 0x49);
+#endif
 	put_reg (RTL8019_REMOTEBYTECOUNT0, 0x00);
 	put_reg (RTL8019_REMOTEBYTECOUNT1, 0x00);
 	put_reg (RTL8019_RECEIVECONFIGURATION, 0x00);	/*00; */
@@ -106,13 +148,14 @@ int eth_init (bd_t * bd)
 	put_reg (RTL8019_INTERRUPTSTATUS, 0xff);
 	put_reg (RTL8019_INTERRUPTMASK, 0x11);	/*b; */
 	put_reg (RTL8019_COMMAND, RTL8019_PAGE1STOP);
-	eth_getenv_enetaddr("ethaddr", enetaddr);
-	put_reg (RTL8019_PHYSICALADDRESS0, enetaddr[0]);
-	put_reg (RTL8019_PHYSICALADDRESS1, enetaddr[1]);
-	put_reg (RTL8019_PHYSICALADDRESS2, enetaddr[2]);
-	put_reg (RTL8019_PHYSICALADDRESS3, enetaddr[3]);
-	put_reg (RTL8019_PHYSICALADDRESS4, enetaddr[4]);
-	put_reg (RTL8019_PHYSICALADDRESS5, enetaddr[5]);
+  	eth_getenv_enetaddr("ethaddr", enetaddr);
+	printf("MAC:%x-%x-%x-%x-%x-%x\n",enetaddr[0],enetaddr[1],enetaddr[2],enetaddr[3],enetaddr[4],enetaddr[5]);    
+   	put_reg (RTL8019_PHYSICALADDRESS0, enetaddr[0]);
+       	put_reg (RTL8019_PHYSICALADDRESS1, enetaddr[1]);
+       	put_reg (RTL8019_PHYSICALADDRESS2, enetaddr[2]);
+       	put_reg (RTL8019_PHYSICALADDRESS3, enetaddr[3]);
+       	put_reg (RTL8019_PHYSICALADDRESS4, enetaddr[4]);
+       	put_reg (RTL8019_PHYSICALADDRESS5, enetaddr[5]);	
 	put_reg (RTL8019_MULTIADDRESS0, 0x00);
 	put_reg (RTL8019_MULTIADDRESS1, 0x00);
 	put_reg (RTL8019_MULTIADDRESS2, 0x00);
@@ -124,6 +167,7 @@ int eth_init (bd_t * bd)
 	put_reg (RTL8019_CURRENT, RTL8019_PSTART);
 	put_reg (RTL8019_COMMAND, RTL8019_PAGE0);
 	put_reg (RTL8019_TRANSMITCONFIGURATION, 0xe0);	/*58; */
+	//put_reg (RTL8019_TRANSMITCONFIGURATION, 0xe6);	/*58; */
 
 	return 0;
 }
@@ -137,7 +181,10 @@ static unsigned char nic_to_pc (void)
 	unsigned short rxlen = 0;
 	unsigned int i = 4;
 	unsigned char current_point;
+#ifdef RTL8019_8BIT
 	unsigned char *addr;
+#endif
+	unsigned short *saddr, temp;
 
 	/*
 	 * The RTL8019's first 4B is packet status,page of next packet
@@ -150,15 +197,24 @@ static unsigned char nic_to_pc (void)
 
 	put_reg (RTL8019_COMMAND, RTL8019_REMOTEDMARD);
 
+#ifdef RTL8019_8BIT
 	rec_head_status = get_reg (RTL8019_DMA_DATA);
 	next_packet_pointer = get_reg (RTL8019_DMA_DATA);
 	packet_length0 = get_reg (RTL8019_DMA_DATA);
 	packet_length1 = get_reg (RTL8019_DMA_DATA);
+#else
+	temp = get_reg_short (RTL8019_DMA_DATA);
+	rec_head_status = (temp & 0xff);
+	next_packet_pointer = (temp >> 8) & 0xff;
+	rxlen = get_reg_short (RTL8019_DMA_DATA);
+#endif
 
 	put_reg (RTL8019_COMMAND, RTL8019_PAGE0);
+#ifdef RTL8019_8BIT
 	/*Packet length is in two 8bit registers */
 	rxlen = packet_length1;
 	rxlen = (((rxlen << 8) & 0xff00) + packet_length0);
+#endif
 	rxlen -= 4;
 
 	if (rxlen > PKTSIZE_ALIGN + PKTALIGN)
@@ -174,8 +230,13 @@ static unsigned char nic_to_pc (void)
 
 	put_reg (RTL8019_COMMAND, RTL8019_REMOTEDMARD);
 
+#ifdef RTL8019_8BIT
 	for (addr = (unsigned char *) NetRxPackets[0], i = rxlen; i > 0; i--)
 		*addr++ = get_reg (RTL8019_DMA_DATA);
+#else
+	for (saddr = (unsigned short *) NetRxPackets[0], i = rxlen>>1; i > 0; i--)
+		*saddr++ = get_reg_short (RTL8019_DMA_DATA);
+#endif
 	/* Pass the packet up to the protocol layers. */
 	NetReceive (NetRxPackets[0], rxlen);
 
@@ -193,7 +254,7 @@ static unsigned char nic_to_pc (void)
 }
 
 /* Get a data block via Ethernet */
-extern int eth_rx (void)
+int rtl8019_recv (struct eth_device *dev)
 {
 	unsigned char temp, current_point;
 
@@ -231,31 +292,58 @@ extern int eth_rx (void)
 }
 
 /* Send a data block via Ethernet. */
-extern int eth_send (volatile void *packet, int length)
+int rtl8019_send (struct eth_device *dev,volatile void *packet, int length)
 {
 	volatile unsigned char *p;
-	unsigned int pn;
+	volatile unsigned short *shortp;
+	unsigned int pn, i, count;
 
+	//printf("eth_send....length=%d\n", length);
+	count = length; if(count < 60) count = 60;
+#ifdef RTL8019_8BIT
 	pn = length;
+#else
+	pn = length >> 1;
+#endif
 	p = (volatile unsigned char *) packet;
+#if 0
+	for(i = 0; i < length; i++)
+		printf("%02x ", *p++);
+	printf("\n");
+#endif
+	shortp = (volatile unsigned short *) packet;
+	//print_8019_reg();
 
 	while (get_reg (RTL8019_COMMAND) == RTL8019_TRANSMIT);
 
 	put_reg (RTL8019_REMOTESTARTADDRESS0, 0);
 	put_reg (RTL8019_REMOTESTARTADDRESS1, RTL8019_TPSTART);
-	put_reg (RTL8019_REMOTEBYTECOUNT0, (pn & 0xff));
-	put_reg (RTL8019_REMOTEBYTECOUNT1, ((pn >> 8) & 0xff));
+	put_reg (RTL8019_REMOTEBYTECOUNT0, (count & 0xff));
+	put_reg (RTL8019_REMOTEBYTECOUNT1, ((count >> 8) & 0xff));
 
 	put_reg (RTL8019_COMMAND, RTL8019_REMOTEDMAWR);
 	while (pn > 0) {
+#ifdef RTL8019_8BIT
 		put_reg (RTL8019_DMA_DATA, *p++);
+#else
+		put_reg_short (RTL8019_DMA_DATA, *shortp++);
+#endif
 		pn--;
 	}
 
+#ifdef RTL8019_8BIT
 	pn = length;
+#else
+	pn = length >> 1;
+#endif
 
-	while (pn < 60) {	/*Padding */
+#ifdef RTL8019_8BIT
+	while (pn < 30) {	/*Padding */
 		put_reg (RTL8019_DMA_DATA, 0);
+#else
+	while (pn < 60) {	/*Padding */
+		put_reg_short (RTL8019_DMA_DATA, 0);
+#endif
 		pn++;
 	}
 
@@ -263,9 +351,29 @@ extern int eth_send (volatile void *packet, int length)
 
 	put_reg (RTL8019_INTERRUPTSTATUS, 0x40);
 	put_reg (RTL8019_TRANSMITPAGE, RTL8019_TPSTART);
-	put_reg (RTL8019_TRANSMITBYTECOUNT0, (pn & 0xff));
-	put_reg (RTL8019_TRANSMITBYTECOUNT1, ((pn >> 8 & 0xff)));
+	put_reg (RTL8019_TRANSMITBYTECOUNT0, (count & 0xff));
+	put_reg (RTL8019_TRANSMITBYTECOUNT1, ((count >> 8 & 0xff)));
 	put_reg (RTL8019_COMMAND, RTL8019_TRANSMIT);
-
 	return 0;
 }
+
+int rtl8019_initialize(u8 dev_num, int base_addr)
+{
+	struct eth_device *dev;
+	dev = malloc(sizeof(*dev));
+	if (!dev) {
+		return 0;
+	}
+	memset(dev, 0, sizeof(*dev));
+
+	dev->init = rtl8019_init;
+	dev->halt = rtl8019_halt;
+	dev->send = rtl8019_send;
+	dev->recv = rtl8019_recv;
+
+	sprintf(dev->name, "%s-%hu", "RTL8019", dev_num);
+	eth_register(dev);
+	return 0;
+}
+
+#endif /* CONFIG_DRIVER_RTL8019 */

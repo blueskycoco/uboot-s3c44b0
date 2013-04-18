@@ -966,7 +966,7 @@ int boot_get_ramdisk (int argc, char * const argv[], bootm_headers_t *images,
 			return 1;
 		}
 
-#if defined(CONFIG_B2) || defined(CONFIG_EVB4510) || defined(CONFIG_ARMADILLO)
+#if defined(CONFIG_B2) || defined(CONFIG_EVB4510) || defined(CONFIG_ARMADILLO) || defined(CONFIG_FS44B0)
 		/*
 		 * We need to copy the ramdisk to SRAM to let Linux boot
 		 */
