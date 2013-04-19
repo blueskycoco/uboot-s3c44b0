@@ -81,6 +81,7 @@ endif
 
 ifeq ($(HOSTOS),cygwin)
 HOSTCFLAGS	+= -ansi
+HOSTCFLAGS	+= -std=c99
 endif
 
 # We build some files with extra pedantic flags to try to minimize things
