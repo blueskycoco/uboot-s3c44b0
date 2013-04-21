@@ -182,9 +182,14 @@
 /*-----------------------------------------------------------------------
  * Environment Variable setup
  */
-#define CONFIG_ENV_IS_IN_EEPROM	1	/* use EEPROM for environment vars */
-#define CONFIG_ENV_OFFSET		0x0	/* environment starts at the beginning of the EEPROM */
-
+//#define CONFIG_ENV_IS_IN_EEPROM	1	/* use EEPROM for environment vars */
+//#define CONFIG_ENV_OFFSET		0x0	/* environment starts at the beginning of the EEPROM */
+#define CONFIG_ENV_IS_IN_FLASH	1	/* use EEPROM for environment vars */
+#define CONFIG_ENV_OFFSET		0x00000000	/* environment starts at the beginning of the EEPROM */
+#define CONFIG_ENV_ADDR (CONFIG_SYS_FLASH_BASE + 0x30000) /* environment start address */ 
+#define CONFIG_ENV_SECT_SIZE 0x10000 /* Total Size of Environment Sector */ 
+#define CONFIG_SYS_MONITOR_BASE PHYS_SDRAM_1
+#define CONFIG_ENV_OVERWRITE
 /*-----------------------------------------------------------------------
  * I2C EEPROM (STM24C02W6) for environment
  */

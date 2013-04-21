@@ -1,4 +1,7 @@
+common/env_flash.o
 .boards.depend
+drivers/serial/.depend
+board/samsung/fs44b0/led.o
 arch/arm/cpu/s3c44b0/.depend
 arch/arm/lib/.depend
 b.sh
