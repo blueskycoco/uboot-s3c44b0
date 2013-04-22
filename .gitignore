@@ -1,3 +1,4 @@
+b.sh
 common/env_flash.o
 .boards.depend
 drivers/serial/.depend
