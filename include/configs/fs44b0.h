@@ -90,13 +90,21 @@
  */
 #include <config_cmd_default.h>
 
-#define CONFIG_CMD_DATE
+//#define CONFIG_CMD_DATE
 #define CONFIG_CMD_ELF
 #define CONFIG_CMD_EEPROM
 #define CONFIG_CMD_I2C
-
-#define CONFIG_CMD_PING
-#define CONFIG_CMD_DHCP
+#undef CONFIG_CMD_FPGA
+#undef CONFIG_CMD_ITEST
+#undef CONFIG_CMD_LOADS
+#undef CONFIG_CMD_MEMORY
+#undef CONFIG_CMD_MISC
+#undef CONFIG_CMD_NFS
+#undef CONFIG_CMD_SETGETDCR
+#undef CONFIG_CMD_SOURCE
+#undef CONFIG_CMD_XIMG
+//#define CONFIG_CMD_PING
+//#define CONFIG_CMD_DHCP
 #define CONFIG_NET_MULTI
 #define CONFIG_BOOTDELAY	5
 #define CONFIG_ETHADDR	00:50:c2:1e:af:fb
@@ -182,13 +190,16 @@
 /*-----------------------------------------------------------------------
  * Environment Variable setup
  */
-//#define CONFIG_ENV_IS_IN_EEPROM	1	/* use EEPROM for environment vars */
-//#define CONFIG_ENV_OFFSET		0x0	/* environment starts at the beginning of the EEPROM */
+#define CONFIG_ENV_IS_IN_EEPROM	1	/* use EEPROM for environment vars */
+#define CONFIG_ENV_OFFSET		0x0	/* environment starts at the beginning of the EEPROM */
+
+#if 0
 #define CONFIG_ENV_IS_IN_FLASH	1	/* use EEPROM for environment vars */
 #define CONFIG_ENV_OFFSET		0x00000000	/* environment starts at the beginning of the EEPROM */
 #define CONFIG_ENV_ADDR (CONFIG_SYS_FLASH_BASE + 0x30000) /* environment start address */ 
 #define CONFIG_ENV_SECT_SIZE 0x10000 /* Total Size of Environment Sector */ 
 #define CONFIG_SYS_MONITOR_BASE PHYS_SDRAM_1
+#endif
 #define CONFIG_ENV_OVERWRITE
 /*-----------------------------------------------------------------------
  * I2C EEPROM (STM24C02W6) for environment
@@ -197,7 +208,7 @@
 #define CONFIG_SYS_I2C_SPEED		400000	/* I2C speed and slave address */
 #define CONFIG_SYS_I2C_SLAVE		0xFE
 
-#define CONFIG_SYS_I2C_EEPROM_ADDR	0xA8	/* EEPROM STM24C02W6		*/
+#define CONFIG_SYS_I2C_EEPROM_ADDR	0xA0	/* EEPROM STM24C02W6		*/
 #define CONFIG_SYS_I2C_EEPROM_ADDR_LEN 1	/* Bytes of address		*/
 /* mask of address bits that overflow into the "EEPROM chip address"	*/
 /*#define CONFIG_SYS_I2C_EEPROM_ADDR_OVERFLOW	0x07*/
