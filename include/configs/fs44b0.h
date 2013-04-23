@@ -51,7 +51,7 @@
  * Size of malloc() pool
  */
 #define CONFIG_SYS_MONITOR_LEN		(256 * 1024)	/* Reserve 256 kB for Monitor	*/
-#define CONFIG_ENV_SIZE		1024		/* 1024 bytes may be used for env vars*/
+#define CONFIG_ENV_SIZE		256//1024		/* 1024 bytes may be used for env vars*/
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024 )
 
 /*
@@ -91,7 +91,7 @@
 #include <config_cmd_default.h>
 
 //#define CONFIG_CMD_DATE
-#define CONFIG_CMD_ELF
+//#define CONFIG_CMD_ELF
 #define CONFIG_CMD_EEPROM
 #define CONFIG_CMD_I2C
 #undef CONFIG_CMD_FPGA
@@ -108,13 +108,12 @@
 #define CONFIG_NET_MULTI
 #define CONFIG_BOOTDELAY	5
 #define CONFIG_ETHADDR	00:50:c2:1e:af:fb
-#define CONFIG_BOOTARGS  "setenv bootargs root=/dev/ram ip=192.168.0.70:::::eth0:off \
-							 ether=25,0,0,0,eth0 ethaddr=00:50:c2:1e:af:fb"
+#define CONFIG_BOOTARGS  "setenv bootargs console=ttySAC0,115200"
 #define CONFIG_NETMASK  255.255.255.0
 #define CONFIG_IPADDR   192.168.0.4
 #define CONFIG_SERVERIP	192.168.0.100
-#define CONFIG_BOOTFILE	"B2-rootfs/usr/B2-zImage.u-boot"
-#define CONFIG_BOOTCOMMAND	"bootm 20000 f0000"
+#define CONFIG_BOOTFILE	"zImage"
+#define CONFIG_BOOTCOMMAND	"cp 20000 c008000 180000;bootm c00080000"
 
 /*
  * Miscellaneous configurable options
@@ -193,14 +192,16 @@
 #define CONFIG_ENV_IS_IN_EEPROM	1	/* use EEPROM for environment vars */
 #define CONFIG_ENV_OFFSET		0x0	/* environment starts at the beginning of the EEPROM */
 
-#if 0
+#if 0 
+for env in nor flash
 #define CONFIG_ENV_IS_IN_FLASH	1	/* use EEPROM for environment vars */
 #define CONFIG_ENV_OFFSET		0x00000000	/* environment starts at the beginning of the EEPROM */
 #define CONFIG_ENV_ADDR (CONFIG_SYS_FLASH_BASE + 0x30000) /* environment start address */ 
 #define CONFIG_ENV_SECT_SIZE 0x10000 /* Total Size of Environment Sector */ 
 #define CONFIG_SYS_MONITOR_BASE PHYS_SDRAM_1
-#endif
 #define CONFIG_ENV_OVERWRITE
+#endif
+
 /*-----------------------------------------------------------------------
  * I2C EEPROM (STM24C02W6) for environment
  */
