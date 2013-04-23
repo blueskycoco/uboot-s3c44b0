@@ -289,7 +289,7 @@ int env_init(void)
 		len -= n;
 		off += n;
 	}
-
+	printf("crc=%x,new=%x\n",crc,new);
 	if (crc == new) {
 		gd->env_addr  = offsetof(env_t,data);
 		gd->env_valid = 1;

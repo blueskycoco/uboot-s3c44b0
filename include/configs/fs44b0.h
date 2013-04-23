@@ -51,7 +51,7 @@
  * Size of malloc() pool
  */
 #define CONFIG_SYS_MONITOR_LEN		(256 * 1024)	/* Reserve 256 kB for Monitor	*/
-#define CONFIG_ENV_SIZE		1024		/* 1024 bytes may be used for env vars*/
+#define CONFIG_ENV_SIZE		240//1024		/* 1024 bytes may be used for env vars*/
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024 )
 
 /*
@@ -108,13 +108,12 @@
 #define CONFIG_NET_MULTI
 #define CONFIG_BOOTDELAY	5
 #define CONFIG_ETHADDR	00:50:c2:1e:af:fb
-#define CONFIG_BOOTARGS  "setenv bootargs root=/dev/ram ip=192.168.0.70:::::eth0:off \
-							 ether=25,0,0,0,eth0 ethaddr=00:50:c2:1e:af:fb"
+//#define CONFIG_BOOTARGS  "setenv bootargs console=ttySAC0,115200"
 #define CONFIG_NETMASK  255.255.255.0
 #define CONFIG_IPADDR   192.168.0.4
 #define CONFIG_SERVERIP	192.168.0.100
-#define CONFIG_BOOTFILE	"B2-rootfs/usr/B2-zImage.u-boot"
-#define CONFIG_BOOTCOMMAND	"bootm 20000 f0000"
+//#define CONFIG_BOOTFILE	"zImage"
+//#define CONFIG_BOOTCOMMAND	"bootm 20000 f0000"
 
 /*
  * Miscellaneous configurable options
