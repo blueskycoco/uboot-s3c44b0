@@ -42,7 +42,7 @@
 #define CONFIG_ARCH_CPU_INIT
 
 #define CONFIG_S3C44B0_CLOCK_SPEED	66 /* we have a 75Mhz S3C44B0*/
-
+#define DEBUG
 
 #undef CONFIG_USE_IRQ			/* don't need them anymore */
 
