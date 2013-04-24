@@ -710,7 +710,7 @@ static int nand_wait(struct mtd_info *mtd, struct nand_chip *this)
 	if (state == FL_ERASING)
 		timeo = (CONFIG_SYS_HZ * 400) / 1000;
 	else
-		timeo = (CONFIG_SYS_HZ * 20) / 1000;
+		timeo = (CONFIG_SYS_HZ * 40) / 1000;
 
 	if ((state == FL_ERASING) && (this->options & NAND_IS_AND))
 		this->cmdfunc(mtd, NAND_CMD_STATUS_MULTI, -1, -1);

@@ -73,7 +73,7 @@ static void s3c44b0_hwcontrol(struct mtd_info *mtd, int cmd, unsigned int ctrl)
 static int s3c44b0_dev_ready(struct mtd_info *mtd)
 {
 	debugX(1, "dev_ready\n");
-	return PDATC&(1<<8);
+	return (PDATC&(1<<8));
 }
 
 

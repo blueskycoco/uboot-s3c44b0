@@ -48,8 +48,8 @@ int board_init (void)
 
 	/* Port C */
 	
-	PCONC = 0xfff5ff54;
-	PDATC = 0x0100;
+	PCONC = 0xfff4ff54;
+	PDATC = 0x0000;
 	PUPC = 0x0000;
 	
 

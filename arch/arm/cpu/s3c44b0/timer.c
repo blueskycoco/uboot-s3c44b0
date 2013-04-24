@@ -83,12 +83,10 @@ void __udelay (unsigned long usec)
 	tmo /= 8;
 
 	tmo += get_timer (0);
-	debug("test udelay %x\n",tmo);
 
 	while (get_timer_masked () < tmo)
 		/*NOP*/;
 	
-	debug("dealy over\n");
 }
 
 void reset_timer_masked (void)
@@ -101,7 +99,6 @@ void reset_timer_masked (void)
 ulong get_timer_masked (void)
 {
 	ulong now = READ_TIMER;
-	debug("test get_timer_masked %x\n",now);
 
 	if (lastdec >= now) {
 		/* normal mode */

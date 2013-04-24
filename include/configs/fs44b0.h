@@ -42,7 +42,7 @@
 #define CONFIG_ARCH_CPU_INIT
 
 #define CONFIG_S3C44B0_CLOCK_SPEED	66 /* we have a 75Mhz S3C44B0*/
-#define DEBUG 10
+//#define DEBUG 10
 
 #undef CONFIG_USE_IRQ			/* don't need them anymore */
 
@@ -51,7 +51,7 @@
  * Size of malloc() pool
  */
 #define CONFIG_SYS_MONITOR_LEN		(256 * 1024)	/* Reserve 256 kB for Monitor	*/
-#define CONFIG_ENV_SIZE		64*1024//1024		/* 1024 bytes may be used for env vars*/
+#define CONFIG_ENV_SIZE		1024		/* 1024 bytes may be used for env vars*/
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 512*1024 )
 
 /*
