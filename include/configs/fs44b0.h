@@ -108,12 +108,12 @@
 #define CONFIG_NET_MULTI
 #define CONFIG_BOOTDELAY	5
 #define CONFIG_ETHADDR	00:50:c2:1e:af:fb
-#define CONFIG_BOOTARGS  "setenv bootargs console=ttySAC0,115200"
+//#define CONFIG_BOOTARGS  "setenv bootargs console=ttySAC0,115200"
 #define CONFIG_NETMASK  255.255.255.0
 #define CONFIG_IPADDR   192.168.0.4
 #define CONFIG_SERVERIP	192.168.0.100
-#define CONFIG_BOOTFILE	"zImage"
-#define CONFIG_BOOTCOMMAND	"cp 20000 c008000 180000;bootm c00080000"
+//#define CONFIG_BOOTFILE	"zImage"
+//#define CONFIG_BOOTCOMMAND	"bootm 20000 f0000"
 
 /*
  * Miscellaneous configurable options

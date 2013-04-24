@@ -97,7 +97,12 @@ int i2c_probe(uchar chip)
 #define S3C44B0X_rIIC_LAST_RECEIV_BIT       (1<<0)
 #define S3C44B0X_rIIC_INTERRUPT_ENABLE      (1<<5)
 #define S3C44B0_IIC_TIMEOUT 100
-
+void delayus(int s)
+{
+	volatile int i;
+	for(i=0;i<10;i++)
+	;
+}
 int i2c_read(uchar chip, uint addr, int alen, uchar *buffer, int len)
 {
 
@@ -115,12 +120,12 @@ int i2c_read(uchar chip, uint addr, int alen, uchar *buffer, int len)
 
 	rIICSTAT |= (1<<5);
 	IICSTAT = rIICSTAT;
-
 	for(k=0; k<S3C44B0_IIC_TIMEOUT; k++) {
 		temp = IICCON;
 		if( (temp & S3C44B0X_rIIC_INTPEND) == S3C44B0X_rIIC_INTPEND)
 		break;
-		udelay(2000);
+		//udelay(2000);
+		delayus(2000);
 	}
 	if (k==S3C44B0_IIC_TIMEOUT)
 		return -1;
@@ -132,17 +137,16 @@ int i2c_read(uchar chip, uint addr, int alen, uchar *buffer, int len)
 
 	IICDS = addr;
 	IICCON = IICCON & ~(S3C44B0X_rIIC_INTPEND);
-
 	/* wait and check ACK */
 	for(k=0; k<S3C44B0_IIC_TIMEOUT; k++) {
 		temp = IICCON;
 		if( (temp & S3C44B0X_rIIC_INTPEND) == S3C44B0X_rIIC_INTPEND)
 		break;
-		udelay(2000);
+	//	udelay(2000);
+		delayus(2000);
 	}
 	if (k==S3C44B0_IIC_TIMEOUT)
 		return -1;
-
 	temp = IICSTAT;
 	if ((temp & S3C44B0X_rIIC_LAST_RECEIV_BIT) == S3C44B0X_rIIC_LAST_RECEIV_BIT )
 		return -1;
@@ -158,17 +162,16 @@ int i2c_read(uchar chip, uint addr, int alen, uchar *buffer, int len)
 	IICSTAT = rIICSTAT;
 
 	IICCON = IICCON & ~(S3C44B0X_rIIC_INTPEND);
-
 	/* wait and check ACK */
 	for(k=0; k<S3C44B0_IIC_TIMEOUT; k++) {
 		temp = IICCON;
 		if( (temp & S3C44B0X_rIIC_INTPEND) == S3C44B0X_rIIC_INTPEND)
 		break;
-		udelay(2000);
+	//	udelay(2000);
+		delayus(2000);
 	}
 	if (k==S3C44B0_IIC_TIMEOUT)
 		return -1;
-
 	temp = IICSTAT;
 	if ((temp & S3C44B0X_rIIC_LAST_RECEIV_BIT) == S3C44B0X_rIIC_LAST_RECEIV_BIT )
 		return -1;
@@ -179,17 +182,16 @@ int i2c_read(uchar chip, uint addr, int alen, uchar *buffer, int len)
 
 	temp = IICCON & ~(S3C44B0X_rIIC_INTPEND);
 	IICCON = temp;
-
 	/* wait and check ACK */
 	for(k=0; k<S3C44B0_IIC_TIMEOUT; k++) {
 		temp = IICCON;
 		if( (temp & S3C44B0X_rIIC_INTPEND) == S3C44B0X_rIIC_INTPEND)
 		break;
-		udelay(2000);
+	//	udelay(2000);
+		delayus(2000);
 	}
 	if (k==S3C44B0_IIC_TIMEOUT)
 		return -1;
-
 
 		buffer[j] = IICDS; /*save readed data*/
 
@@ -201,17 +203,16 @@ int i2c_read(uchar chip, uint addr, int alen, uchar *buffer, int len)
 	*/
 	temp = IICCON & ~(S3C44B0X_rIIC_INTPEND | (1<<7));
 	IICCON = temp;
-
 	/* wait but NOT check ACK */
 	for(k=0; k<S3C44B0_IIC_TIMEOUT; k++) {
 		temp = IICCON;
 		if( (temp & S3C44B0X_rIIC_INTPEND) == S3C44B0X_rIIC_INTPEND)
 		break;
-		udelay(2000);
+	//	udelay(2000);
+		delayus(2000);
 	}
 	if (k==S3C44B0_IIC_TIMEOUT)
 		return -1;
-
 	buffer[j] = IICDS; /*save readed data*/
 
 	rIICSTAT = 0x90; /*master recv*/
