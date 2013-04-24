@@ -42,7 +42,7 @@
 #define CONFIG_ARCH_CPU_INIT
 
 #define CONFIG_S3C44B0_CLOCK_SPEED	66 /* we have a 75Mhz S3C44B0*/
-#define DEBUG
+#define DEBUG 10
 
 #undef CONFIG_USE_IRQ			/* don't need them anymore */
 
@@ -52,7 +52,7 @@
  */
 #define CONFIG_SYS_MONITOR_LEN		(256 * 1024)	/* Reserve 256 kB for Monitor	*/
 #define CONFIG_ENV_SIZE		256//1024		/* 1024 bytes may be used for env vars*/
-#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024 )
+#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 512*1024 )
 
 /*
  * Hardware drivers
@@ -97,7 +97,7 @@
 #undef CONFIG_CMD_FPGA
 #undef CONFIG_CMD_ITEST
 #undef CONFIG_CMD_LOADS
-#undef CONFIG_CMD_MEMORY
+//#undef CONFIG_CMD_MEMORY
 #undef CONFIG_CMD_MISC
 #undef CONFIG_CMD_NFS
 #undef CONFIG_CMD_SETGETDCR
@@ -105,6 +105,8 @@
 #undef CONFIG_CMD_XIMG
 //#define CONFIG_CMD_PING
 //#define CONFIG_CMD_DHCP
+
+
 #define CONFIG_NET_MULTI
 #define CONFIG_BOOTDELAY	5
 #define CONFIG_ETHADDR	00:50:c2:1e:af:fb
@@ -224,6 +226,25 @@ for env in nor flash
 #define CONFIG_SYS_JFFS2_FIRST_SECTOR	2
 #define CONFIG_SYS_JFFS2_NUM_BANKS     1
 */
+#define CONFIG_CMD_NAND
+#ifdef CONFIG_CMD_NAND
+#define CONFIG_NAND_S3C44B0
+#define CONFIG_SYS_MAX_NAND_DEVICE	1
+#define NAND_MAX_CHIPS			1
+#define CONFIG_SYS_NAND_BASE		0x02000000
+#define CONFIG_CMD_FAT		/* FAT support			*/
+#define CONFIG_CMD_UBI		/* UBI Support			*/
+#define CONFIG_CMD_UBIFS	/* UBIFS Support		*/
+#define CONFIG_CMD_MTDPARTS	/* Enable MTD parts commands    */
+#define CONFIG_MTD_DEVICE	/* needed for mtdparts commands */
+#define CONFIG_MTD_PARTITIONS
+#define MTDIDS_DEFAULT		"nand0=omap2-nand.0"
+#define MTDPARTS_DEFAULT	"mtdparts=omap2-nand.0:896k(uboot),"\
+				"128k(uboot-env),3m(kernel),252m(ubi)"
+				
+#define CONFIG_RBTREE
+#define CONFIG_LZO
+#endif
 
 /*
 	Linux TAGs (see arch/arm/lib/armlinux.c)
