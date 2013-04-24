@@ -51,7 +51,7 @@
  * Size of malloc() pool
  */
 #define CONFIG_SYS_MONITOR_LEN		(256 * 1024)	/* Reserve 256 kB for Monitor	*/
-#define CONFIG_ENV_SIZE		256//1024		/* 1024 bytes may be used for env vars*/
+#define CONFIG_ENV_SIZE		64*1024//1024		/* 1024 bytes may be used for env vars*/
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 512*1024 )
 
 /*
@@ -191,14 +191,13 @@
 /*-----------------------------------------------------------------------
  * Environment Variable setup
  */
-#define CONFIG_ENV_IS_IN_EEPROM	1	/* use EEPROM for environment vars */
-#define CONFIG_ENV_OFFSET		0x0	/* environment starts at the beginning of the EEPROM */
+//#define CONFIG_ENV_IS_IN_EEPROM	1	/* use EEPROM for environment vars */
+//#define CONFIG_ENV_OFFSET		0x0	/* environment starts at the beginning of the EEPROM */
 
-#if 0 
-for env in nor flash
+#if 1 
 #define CONFIG_ENV_IS_IN_FLASH	1	/* use EEPROM for environment vars */
 #define CONFIG_ENV_OFFSET		0x00000000	/* environment starts at the beginning of the EEPROM */
-#define CONFIG_ENV_ADDR (CONFIG_SYS_FLASH_BASE + 0x30000) /* environment start address */ 
+#define CONFIG_ENV_ADDR (CONFIG_SYS_FLASH_BASE + 0x50000) /* environment start address */ 
 #define CONFIG_ENV_SECT_SIZE 0x10000 /* Total Size of Environment Sector */ 
 #define CONFIG_SYS_MONITOR_BASE PHYS_SDRAM_1
 #define CONFIG_ENV_OVERWRITE
@@ -238,9 +237,8 @@ for env in nor flash
 #define CONFIG_CMD_MTDPARTS	/* Enable MTD parts commands    */
 #define CONFIG_MTD_DEVICE	/* needed for mtdparts commands */
 #define CONFIG_MTD_PARTITIONS
-#define MTDIDS_DEFAULT		"nand0=omap2-nand.0"
-#define MTDPARTS_DEFAULT	"mtdparts=omap2-nand.0:896k(uboot),"\
-				"128k(uboot-env),3m(kernel),252m(ubi)"
+#define MTDIDS_DEFAULT		"nand0=s3c44b0-nand.0"
+#define MTDPARTS_DEFAULT	"mtdparts=s3c44b0-nand.0:16m(ubi)"
 				
 #define CONFIG_RBTREE
 #define CONFIG_LZO
