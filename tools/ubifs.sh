@@ -93,7 +93,7 @@ echo
 
 #Generate ubifs image
 echo -n "Generating ubifs..."
-mkfs.ubifs -x lzo -m $page_size_in_bytes -e $logical_erase_block_size -c $patition_logical_blocks -o rootfs_ubifs.img -d $path_to_rootfs
+mkfs.ubifs -x lzo -m $page_size_in_bytes -e $logical_erase_block_size -c $patition_logical_blocks -o rootfs_ubifs.img -d $path_to_rootfs --squash-rino-perm
 check_result
 echo -n "Generating ubi image out of the ubifs..."
 ubinize -o ubi.img -m $page_size_in_bytes -p $block_size -s $page_size_in_bytes $config_file -v
