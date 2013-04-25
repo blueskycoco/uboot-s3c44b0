@@ -25,7 +25,7 @@ do
         if [ $? -ne 0 ]
         then
                 echo
-                echo "Cannot find command /"${cmd}/""
+                echo "Cannot find command \"${cmd}\""
                 echo
                 exit 1
         fi
@@ -55,7 +55,7 @@ wear_level_reserved_blocks=`expr $blocks_per_device / 100`
 echo "Reserved blocks for wear level                            [$wear_level_reserved_blocks]"
 
 #logical_erase_block_size is physical erase block size minus 2 pages for UBI
-logical_pages_per_block=`expr $pages_per_block - 2`
+logical_pages_per_block=`expr $pages_per_block - 1`
 logical_erase_block_size=`expr $page_size_in_bytes \* $logical_pages_per_block`
 echo "Logical erase block size                                  [$logical_erase_block_size]bytes."
 
@@ -75,6 +75,8 @@ echo "Logical blocks in a partition                             [$patition_logic
 fs_vol_size=`expr $patition_logical_blocks \* $logical_erase_block_size`
 echo "File-system volume                                        [$fs_vol_size]bytes."
 
+page_size_in_bytes_slp=`expr $page_size_in_bytes / 2`
+echo "SubData offset                            		[$page_size_in_bytes_slp]"
 echo
 echo "Generating configuration file..."
 echo "[rootfs-volume]"  > $config_file
@@ -93,10 +95,10 @@ echo
 
 #Generate ubifs image
 echo -n "Generating ubifs..."
-mkfs.ubifs -x lzo -m $page_size_in_bytes -e $logical_erase_block_size -c $patition_logical_blocks -o rootfs_ubifs.img -d $path_to_rootfs --squash-rino-perm
+mkfs.ubifs -x lzo -m $page_size_in_bytes -e $logical_erase_block_size -c $patition_logical_blocks -o rootfs_ubifs.img -d $path_to_rootfs
 check_result
 echo -n "Generating ubi image out of the ubifs..."
-ubinize -o ubi.img -m $page_size_in_bytes -p $block_size -s $page_size_in_bytes $config_file -v
+ubinize -o ubi.img -m $page_size_in_bytes -p $block_size -s $page_size_in_bytes_slp $config_file -v
 check_result
 
 rm -f rootfs_ubifs.img
