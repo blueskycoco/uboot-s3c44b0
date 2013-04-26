@@ -48,11 +48,11 @@
 # define EIEIO		/* nothing */
 #endif
 
-#define	 SL811_ADR (0x50000000)
-#define	 SL811_DAT (0x50000001)
+#define	 SL811_ADR (0x0a000000)
+#define	 SL811_DAT (0x0a000001)
 
 #define mdelay(n) ({unsigned long msec=(n); while (msec--) udelay(1000);})
-
+#define SL811_DEBUG 
 #ifdef SL811_DEBUG
 static int debug = 9;
 #endif
@@ -107,7 +107,7 @@ static void inline sl811_write_buf(__u8 offset, __u8 *buf, __u8 size)
 		EIEIO;
 	}
 }
-
+#if 0
 int usb_init_kup4x (void)
 {
 	volatile immap_t *immap = (immap_t *) CONFIG_SYS_IMMR;
@@ -138,7 +138,7 @@ int usb_init_kup4x (void)
 	printf ("SL811 ready\n");
 	return (0);
 }
-
+#endif
 /*
  * This function resets SL811HS controller and detects the speed of
  * the connecting device

@@ -244,6 +244,12 @@
 #define CONFIG_LZO
 #endif
 
+#define CONFIG_USB_STORAGE 1
+#define CONFIG_USB_SL811HS 1
+#define CONFIG_CMD_USB
+#define CONGIG_CMD_STORAGE
+#define CONFIG_DOS_PARTITION 
+#define CONFIG_CMD_EXT2		
 /*
 	Linux TAGs (see arch/arm/lib/armlinux.c)
 */

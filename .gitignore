@@ -1,3 +1,11 @@
+common/cmd_ext2.o
+common/cmd_usb.o
+common/usb.o
+common/usb_storage.o
+disk/part_dos.o
+drivers/usb/host/sl811-hcd.o
+fs/ext2/dev.o
+fs/ext2/ext2fs.o
 common/cmd_fat.o
 common/cmd_mtdparts.o
 common/cmd_nand.o
